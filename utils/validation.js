@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const baseContactSchema = {
-  name: Joi.string().min(3).max(30),
+  name: Joi.string().min(2).max(30),
   email: Joi.string().email({
     minDomainSegments: 2,
     tlds: ['com', 'pl', 'net'],
@@ -11,6 +11,7 @@ const baseContactSchema = {
     .message({
       'string.pattern.base': `Phone number must be written as 777-777-777.`,
     }),
+  favorite: Joi.boolean(),
 };
 
 const contactValidator = Joi.object({

@@ -5,7 +5,8 @@ const {
   removeContact,
   addContact,
   updateContact,
-} = require('../../models/contacts');
+  updateStatusContact,
+} = require('../../service/contactsService');
 
 const validate = require('../../utils/validation');
 
@@ -56,6 +57,30 @@ router.put(
       });
     } else {
       return res.json({ code: 404, message: 'Not found' });
+    }
+  }
+);
+
+router.patch(
+  '/:contactId',
+  validate.contactUpdateValidator,
+  async (req, res, next) => {
+    try {
+      const { contactId } = req.params;
+      const { favorite } = req.body;
+
+      if (!favorite) {
+        return res.status(400).json({ message: 'missing field favorite' });
+      }
+
+      const updatedContact = await updateStatusContact(contactId, { favorite });
+
+      if (!updatedContact) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      res.status(200).json(updatedContact);
+    } catch (error) {
+      console.error('Error:', error.message);
     }
   }
 );

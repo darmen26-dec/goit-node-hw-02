@@ -27,13 +27,10 @@ router.get('/:contactId', async (req, res, next) => {
     const { contactId } = req.params;
     const ownerId = req.user._id;
     const contact = await getContactById(contactId, ownerId);
-    if (contact) {
-      return res.status(200).json({ contact });
-    } else {
-      return res
-        .status(404)
-        .json({ message: `Contact with ID ${contactId} not found` });
-    }
+    if (contact) return res.status(200).json({ contact });
+    return res
+      .status(404)
+      .json({ message: `Contact with ID ${contactId} not found` });
   } catch (error) {
     next(error);
   }
@@ -54,15 +51,13 @@ router.delete('/:contactId', async (req, res, next) => {
     const { contactId } = req.params;
     const ownerId = req.user._id;
     const contact = await removeContact(contactId, ownerId);
-    if (contact) {
+    if (contact)
       return res
         .status(200)
         .json({ message: `Contact with ID ${contactId} deleted` });
-    } else {
-      return res
-        .status(404)
-        .json({ message: `Contact with ID ${contactId} not found` });
-    }
+    return res
+      .status(404)
+      .json({ message: `Contact with ID ${contactId} not found` });
   } catch (error) {
     next(error);
   }
@@ -77,15 +72,13 @@ router.put(
       const ownerId = req.user._id;
       const contactToEdit = await updateContact(contactId, req.body, ownerId);
 
-      if (contactToEdit) {
+      if (contactToEdit)
         return res.status(200).json({
           status: 'success',
           data: { contactToEdit },
           message: 'Contact has been updated successfully',
         });
-      } else {
-        return res.json({ code: 404, message: 'Not found' });
-      }
+      return res.json({ code: 404, message: 'Not found' });
     } catch (error) {
       next(error);
     }
@@ -100,9 +93,8 @@ router.patch(
       const { contactId } = req.params;
       const { favorite } = req.body;
 
-      if (!favorite) {
+      if (!favorite)
         return res.status(400).json({ message: 'missing field favorite' });
-      }
 
       const ownerId = req.user._id;
       const updatedContact = await updateStatusContact(
@@ -111,10 +103,9 @@ router.patch(
         ownerId
       );
 
-      if (!updatedContact) {
+      if (!updatedContact)
         return res.status(404).json({ message: 'Not found' });
-      }
-      res.status(200).json(updatedContact);
+      return res.status(200).json(updatedContact);
     } catch (error) {
       next(error);
     }

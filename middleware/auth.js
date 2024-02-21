@@ -6,11 +6,10 @@ const checkAuthorization = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith('Bearer '))
       return res
         .status(401)
         .json({ message: 'Authorization header missing or invalid' });
-    }
 
     const token = authHeader.split(' ')[1];
 
@@ -18,9 +17,9 @@ const checkAuthorization = async (req, res, next) => {
     const userId = verify.id;
     const user = await User.findOne({ _id: userId });
 
-    if (!user || user.token !== token) {
+    if (!user || user.token !== token)
       return res.status(401).json({ message: 'Not authorized' });
-    }
+
     req.user = user;
     next();
   } catch (error) {

@@ -17,16 +17,13 @@ router.post('/signup', async (req, res, next) => {
       email,
       password,
     });
-    if (signUpValidationResult.error) {
+    if (signUpValidationResult.error)
       return res
         .status(400)
         .json({ message: signUpValidationResult.error.details[0].message });
-    }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: 'Email in use' });
-    }
+    if (existingUser) return res.status(409).json({ message: 'Email in use' });
 
     const user = await signUp({ email, password, subscription });
     res.status(201).json({
@@ -45,22 +42,19 @@ router.post('/login', async (req, res) => {
       email,
       password,
     });
-    if (loginValidationResult.error) {
+    if (loginValidationResult.error)
       return res
         .status(400)
         .json({ message: loginValidationResult.error.details[0].message });
-    }
 
     const user = await login(email, password);
 
-    if (!user) {
+    if (!user)
       return res.status(401).json({ message: 'Email or password is wrong' });
-    }
 
     const checkPasswordValidity = user.validPassword(password);
-    if (!checkPasswordValidity) {
+    if (!checkPasswordValidity)
       return res.status(401).json({ message: 'Email or password is wrong' });
-    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
@@ -80,9 +74,8 @@ router.get('/logout', checkAuthorization, async (req, res, next) => {
   try {
     const { _id } = req.user;
     const user = await User.findById(_id);
-    if (!user) {
-      return res.status(401).json({ message: 'Not authorized' });
-    }
+    if (!user) return res.status(401).json({ message: 'Not authorized' });
+
     user.token = null;
     await user.save();
     res.status(204).end();
@@ -94,11 +87,10 @@ router.get('/logout', checkAuthorization, async (req, res, next) => {
 router.get('/current', checkAuthorization, async (req, res, next) => {
   try {
     const currentUser = req.user;
-    if (!currentUser) {
+    if (!currentUser)
       return res.status(401).json({ message: 'Not authorized' });
-    }
 
-    res.status(200).json({
+    return res.status(200).json({
       email: currentUser.email,
       subscription: currentUser.subscription,
     });

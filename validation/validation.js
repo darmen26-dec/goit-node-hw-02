@@ -35,7 +35,7 @@ const validate = (schema, body, next) => {
   next();
 };
 
-module.exports.contactValidator = (req, res, next) => {
+const validateContact = (req, res, next) => {
   const { error } = contactValidator.validate(req.body);
   if (error) {
     return res.status(400).json({ message: 'missing required fields' });
@@ -43,7 +43,7 @@ module.exports.contactValidator = (req, res, next) => {
   next();
 };
 
-module.exports.contactUpdateValidator = (req, res, next) => {
+const contactUpdateValidator = (req, res, next) => {
   const { error } = updateContact.validate(req.body);
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({ message: 'missing fields' });
@@ -53,4 +53,29 @@ module.exports.contactUpdateValidator = (req, res, next) => {
     return res.status(400).json({ message: message });
   }
   next();
+};
+
+const loginAndSignUpSchema = Joi.object({
+  password: Joi.string()
+    .min(8)
+    .max(30)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z]).{8,30}$/)
+    .required()
+    .messages({
+      'string.min': 'Password must be at least 8 characters',
+      'string.max': 'Password must not be more than 30 characters',
+      'string.pattern.base':
+        'Password must contain at least one uppercase letter and one lowercase letter',
+      'any.required': 'Password is required',
+    }),
+  email: Joi.string().email().required().messages({
+    'string.email': 'Please enter a valid email address',
+    'any.required': 'Email is required',
+  }),
+});
+
+module.exports = {
+  validateContact,
+  contactUpdateValidator,
+  loginAndSignUpSchema,
 };

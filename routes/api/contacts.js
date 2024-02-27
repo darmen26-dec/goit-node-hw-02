@@ -93,7 +93,7 @@ router.patch(
       const { contactId } = req.params;
       const { favorite } = req.body;
 
-      if (!favorite)
+      if (favorite === undefined || favorite === null)
         return res.status(400).json({ message: 'missing field favorite' });
 
       const ownerId = req.user._id;

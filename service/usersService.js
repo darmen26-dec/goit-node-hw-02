@@ -1,9 +1,17 @@
 const { User } = require('../schemas/users.schema');
+const gravatar = require('gravatar');
 
 const signUp = async (body) => {
   try {
-    const newUser = new User(body);
-    newUser.setPassword(body.password);
+    const { email, password, subscription } = body;
+    const avatarURL = gravatar.url(email, {
+      protocol: 'https',
+      s: '250',
+      default: 'robohash',
+    });
+
+    const newUser = new User({ email, password, subscription, avatarURL });
+    newUser.setPassword(password);
     await newUser.save();
     return newUser;
   } catch (error) {

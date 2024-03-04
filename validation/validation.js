@@ -74,8 +74,15 @@ const loginAndSignUpSchema = Joi.object({
   }),
 });
 
+const emailValidationSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'string.email': 'Invalid email format',
+  }),
+});
+
 module.exports = {
   validateContact,
   contactUpdateValidator,
   loginAndSignUpSchema,
+  emailValidationSchema,
 };
